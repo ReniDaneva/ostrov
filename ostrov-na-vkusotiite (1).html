@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Островът на вкусотиите и лакомствата – 2. клас Пружинките</title>
+<style>
+  :root {
+    --jungle-dark: #1b4332;
+    --jungle-mid: #2d6a4f;
+    --wood: #8b5a2b;
+    --wood-dark: #5c3a21;
+    --gold: #ffb703;
+    --coral: #fb8500;
+    --red-alert: #e63946;
+    --cream: #fffdf7;
+  }
+  * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Comic Sans MS', 'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: #1b4332;
+    color: #2b2d42;
+    overflow: hidden;
+    height: 100vh; width: 100vw;
+    display: flex; justify-content: center; align-items: center;
+  }
+  h1, h2, h3 { font-weight: 900; letter-spacing: 0.4px; }
+  .screen {
+    display: none; width: 100%; height: 100%;
+    position: relative; flex-direction: column;
+    align-items: center; justify-content: center; padding: 15px;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .btn-jungle {
+    background: linear-gradient(180deg, #ffb703 0%, #fb8500 100%);
+    border: 4px solid #fff; border-radius: 50px; color: #fff;
+    font-size: 1.65rem; font-weight: 900;
+    padding: 15px 38px; cursor: pointer;
+    box-shadow: 0 8px 0 #b35900, 0 12px 20px rgba(0,0,0,0.35);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.25);
+  }
+  .btn-jungle:active { transform: translateY(5px); box-shadow: 0 3px 0 #b35900; }
+  .btn-jungle:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* ЕКРАН 1: ДЪРВЕНОТО КОЛЕЛО И ПАПАГАЛЪТ */
+  #screen-wheel {
+    background: radial-gradient(circle at top, #95d5b2 0%, #40916c 45%, #1b4332 100%);
+  }
+  .storybook-leaves-top {
+    position: absolute; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; pointer-events: none;
+    font-size: 4rem; padding: 0 15px;
+  }
+  .wheel-header {
+    background: #fffdf7; padding: 12px 32px;
+    border-radius: 30px; border: 5px solid var(--wood);
+    margin-bottom: 18px; text-align: center;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.28);
+    z-index: 2;
+  }
+  .wheel-header h1 { margin: 0; color: var(--jungle-dark); font-size: 1.9rem; }
+  .wheel-header p { margin: 4px 0 0 0; color: #6f4518; font-weight: 800; font-size: 1.1rem; }
+
+  .wheel-stage {
+    display: flex; align-items: center; justify-content: center;
+    gap: 45px; flex-wrap: wrap; z-index: 2;
+  }
+  .wheel-wrapper {
+    position: relative; width: 440px; height: 440px;
+    display: flex; justify-content: center; align-items: center;
+  }
+  .wheel-pointer {
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 24px solid transparent; border-right: 24px solid transparent;
+    border-top: 46px solid var(--red-alert); z-index: 10;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.4));
+  }
+  #wheelCanvas {
+    border-radius: 50%; border: 14px solid var(--wood-dark);
+    box-shadow: 0 16px 35px rgba(0,0,0,0.5), inset 0 0 18px rgba(0,0,0,0.4);
+    background: var(--wood);
+  }
+  .parrot-box {
+    background: #fffdf7; border: 6px solid var(--wood);
+    border-radius: 32px; padding: 25px; width: 350px; text-align: center;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.35);
+  }
+  .parrot-icon { font-size: 6rem; display: inline-block; }
+  .parrot-spin { animation: parrotDance 0.35s infinite alternate; }
+  @keyframes parrotDance {
+    from { transform: rotate(-14deg) scale(1.05); }
+    to { transform: rotate(14deg) scale(1.18); }
+  }
+  .parrot-speech {
+    background: #fefae0; border: 3px dashed #d4a373;
+    border-radius: 20px; padding: 14px; margin: 14px 0;
+    min-height: 76px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.35rem; font-weight: 900; color: #3d220e;
+  }
+  .chosen-number-big {
+    font-size: 2.8rem; color: #e63946; display: block;
+  }
+
+  /* ЕКРАН 2: РЕАЛИСТИЧНА СЛАДКАРНИЦА С ВИТРИНИ */
+  #screen-bakery {
+    background: linear-gradient(180deg, #ffe5d9 0%, #ffcad4 30%, #f4acb7 30%, #f8edeb 32%, #e8d8c4 100%);
+    justify-content: space-between; padding: 12px 20px;
+  }
+  .awning-stripes {
+    position: absolute; top: 0; left: 0; width: 100%; height: 22px;
+    background: repeating-linear-gradient(90deg, #e63946 0px, #e63946 40px, #fffdf7 40px, #fffdf7 80px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  .top-bar {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    background: #6f4518; color: #fff; padding: 10px 25px; border-radius: 20px;
+    border: 4px solid #d4a373; margin-top: 14px;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  }
+  .top-bar h2 { margin: 0; font-size: 1.55rem; color: var(--gold); }
+
+  .bakery-layout {
+    display: grid; grid-template-columns: 330px 1fr;
+    gap: 20px; width: 100%; height: calc(100vh - 100px);
+  }
+  .wallet-panel {
+    background: linear-gradient(180deg, #7f4f24 0%, #582f0e 100%);
+    border: 6px solid #b08968; border-radius: 28px;
+    padding: 15px; color: #fff; display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.3);
+  }
+  .wallet-total {
+    background: #fff; color: #1b4332;
+    font-size: 2.4rem; font-weight: 900; padding: 8px 25px; border-radius: 18px;
+    border: 4px solid var(--gold); margin: 8px 0 14px 0; width: 100%; text-align: center;
+  }
+  .bills-container {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; overflow-y: auto; padding: 5px;
+  }
+  .euro-bill {
+    width: 96px; height: 50px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1.3rem; color: #fff;
+    border: 2px solid rgba(255,255,255,0.8);
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.3);
+  }
+  .bill-50 { background: linear-gradient(135deg, #e07a5f, #bc4749); }
+  .bill-20 { background: linear-gradient(135deg, #3a86ff, #023e8a); }
+  .bill-10 { background: linear-gradient(135deg, #ef476f, #b5179e); }
+  .bill-5  { background: linear-gradient(135deg, #52b788, #2d6a4f); }
+  .euro-coin {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 1.15rem;
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.35);
+  }
+  .coin-2 { background: radial-gradient(circle, #ffd166 55%, #adb5bd 58%); color: #2b2d42; border: 2px solid #6c757d; }
+  .coin-1 { background: radial-gradient(circle, #e9ecef 55%, #ffb703 58%); color: #2b2d42; border: 2px solid #b35900; }
+
+  /* СТЪКЛЕНА ВИТРИНА С РАФТОВЕ */
+  .showcase-panel {
+    background: linear-gradient(180deg, rgba(224, 247, 250, 0.92) 0%, rgba(255, 253, 247, 0.95) 100%);
+    border: 6px solid #a47148;
+    border-radius: 28px; padding: 16px; display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px; overflow-y: auto; align-content: start;
+    box-shadow: inset 0 0 25px rgba(144, 224, 239, 0.5), 0 10px 22px rgba(0,0,0,0.25);
+  }
+  .sweet-card {
+    background: #fff; border: 3px solid #f3d5b5; border-bottom: 8px solid #d4a373;
+    border-radius: 20px; padding: 10px 6px; display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between; cursor: pointer; position: relative;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.12);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .sweet-card:hover:not(.sold):not(.disabled-item) {
+    transform: translateY(-5px) scale(1.03);
+    border-color: var(--coral);
+  }
+  .sweet-emoji { font-size: 3rem; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.15)); }
+  .sweet-name { font-size: 0.88rem; font-weight: 900; text-align: center; color: #4a3728; margin: 4px 0; }
+  .price-tag {
+    background: #ffe8a3; color: #3d220e;
+    font-size: 1.25rem; font-weight: 900; padding: 3px 14px;
+    border-radius: 10px; border: 2px solid #8b5a2b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+  .sweet-card.sold { opacity: 0.35; pointer-events: none; filter: grayscale(80%); }
+  .sweet-card.sold::after {
+    content: "ПРОДАДЕНО"; position: absolute; top: 42%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-18deg);
+    background: var(--red-alert); color: #fff; font-weight: 900;
+    font-size: 0.85rem; padding: 4px 8px; border-radius: 6px; border: 2px solid #fff;
+  }
+  .sweet-card.disabled-item { opacity: 0.48; cursor: not-allowed; }
+
+  /* ЕКРАН 3: УЛИЦАТА И БАНКОМАТЪТ С 9 СУМИ */
+  #screen-street {
+    background: linear-gradient(180deg, #90e0ef 0%, #caf0f8 58%, #52b788 58%, #2d6a4f 100%);
+  }
+  .street-scene {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; max-width: 1120px; gap: 35px; flex-wrap: wrap;
+  }
+  .street-status-card {
+    background: var(--cream); border: 6px solid var(--wood);
+    border-radius: 30px; padding: 25px; width: 380px; text-align: center;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+  }
+  .atm-kiosk {
+    background: linear-gradient(180deg, #0077b6 0%, #023e8a 100%);
+    border: 8px solid #caf0f8; border-radius: 32px; padding: 22px 28px;
+    width: 520px; max-width: 95vw; text-align: center; color: #fff;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+  }
+  .atm-screen-inner {
+    background: #e0fbfc; color: #03045e;
+    border: 5px solid #03045e; border-radius: 20px;
+    padding: 18px; margin-top: 12px;
+  }
+  .atm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+  .atm-amount-btn {
+    background: linear-gradient(180deg, #ffb703 0%, #fb8500 100%);
+    border: 3px solid #fff; border-radius: 16px; color: #fff;
+    font-size: 1.75rem; font-weight: 900;
+    padding: 16px 8px; cursor: pointer;
+    box-shadow: 0 6px 0 #b35900;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
+  }
+  .atm-amount-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b35900; }
+
+  /* МОДАЛЕН ПРОЗОРЕЦ ЗА СМЯТАНЕ С ЕКРАННА КЛАВИАТУРА 0-9 */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75); z-index: 100;
+    justify-content: center; align-items: center; padding: 15px;
+  }
+  .modal-overlay.active { display: flex; }
+  .calc-modal {
+    background: var(--cream); border: 6px solid var(--wood);
+    border-radius: 30px; padding: 22px 32px; max-width: 640px;
+    width: 100%; text-align: center; position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  }
+  .math-equation {
+    background: #edf6f9; border: 4px dashed var(--jungle-mid);
+    border-radius: 20px; padding: 14px;
+    font-size: 2.5rem; font-weight: 900; color: var(--jungle-dark); margin: 12px 0;
+    display: flex; justify-content: center; align-items: center; gap: 14px;
+  }
+  .answer-display {
+    display: inline-block; min-width: 110px; height: 64px; line-height: 58px;
+    background: #fff; border: 4px solid var(--coral); border-radius: 15px;
+    color: var(--coral); padding: 0 15px;
+  }
+  .numpad {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 11px; max-width: 360px; margin: 12px auto 0 auto;
+  }
+  .num-btn {
+    background: #fff; border: 3px solid #ced4da; border-radius: 18px;
+    font-size: 1.95rem; font-weight: 900;
+    padding: 13px; cursor: pointer; color: #2b2d42; box-shadow: 0 5px 0 #adb5bd;
+  }
+  .num-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #adb5bd; }
+  .num-btn.btn-clear {
+    background: #ffccd5; border-color: #ff4d6d; color: #c9184a;
+    box-shadow: 0 5px 0 #c9184a; font-size: 1.35rem;
+  }
+  .num-btn.btn-ok {
+    background: #b7e4c7; border-color: #2d6a4f; color: #1b4332;
+    box-shadow: 0 5px 0 #1b4332; font-size: 1.35rem;
+  }
+  .feedback-banner {
+    min-height: 42px; font-size: 1.75rem; font-weight: 900; margin-top: 8px;
+  }
+  .feedback-wrong { color: var(--red-alert); }
+  .feedback-right { color: #2d6a4f; }
+  .close-modal-btn {
+    position: absolute; top: 12px; right: 15px; background: #e63946;
+    color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px;
+    font-size: 1.4rem; font-weight: 900; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="screen-wheel" class="screen active">
+  <div class="storybook-leaves-top"><span>🌿🌴🦜</span><span>🌺🐒🌴</span></div>
+  <div class="wheel-header">
+    <h1>🏝️ Островът на вкусотиите и лакомствата 🧁</h1>
+    <p>2. клас „Пружинките“ • Кой влиза в сладкарницата на Капитан Джак?</p>
+  </div>
+
+  <div class="wheel-stage">
+    <div class="wheel-wrapper">
+      <div class="wheel-pointer"></div>
+      <canvas id="wheelCanvas" width="420" height="420"></canvas>
+    </div>
+
+    <div class="parrot-box">
+      <div id="parrotEmoji" class="parrot-icon">🦜</div>
+      <p id="remainingCountText" style="margin: 4px 0; font-weight: 900; color: #5c3a21; font-size: 1.15rem;">Оставащи ученици: 22</p>
+      <div id="parrotSpeech" class="parrot-speech">Натисни бутона ЗАВЪРТИ!</div>
+      <button id="spinBtn" class="btn-jungle" style="width: 100%;" onclick="spinWheel()">🎡 ЗАВЪРТИ</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-bakery" class="screen">
+  <div class="awning-stripes"></div>
+  <div class="top-bar">
+    <h2>🧁 Сладкарница „Сладкият оазис“ • Клиент: Пружинка № <span id="bakeryStudentNum">1</span></h2>
+    <div style="font-weight: 900; font-size: 1.1rem;">Избери 1 лакомство от витрината!</div>
+  </div>
+  <div class="bakery-layout">
+    <div class="wallet-panel">
+      <h3 style="margin: 0; font-size: 1.4rem;">👛 Твоят портфейл</h3>
+      <div class="wallet-total"><span id="walletAmountText">0</span> €</div>
+      <div style="font-size: 0.95rem; margin-bottom: 8px; opacity: 0.95;">Банкноти и монети в портфейла:</div>
+      <div id="billsContainer" class="bills-container"></div>
+    </div>
+    <div id="showcasePanel" class="showcase-panel"></div>
+  </div>
+</div>
+
+<div id="screen-street" class="screen">
+  <div class="street-scene">
+    <div class="street-status-card">
+      <div style="font-size: 4rem;">🎉🧁</div>
+      <h2 style="color: #1b4332; font-size: 1.85rem; margin: 8px 0;">Браво, Пружинка № <span id="streetStudentNum">1</span>!</h2>
+      <p style="font-size: 1.2rem; font-weight: 800; color: #3d220e;">В портфейла ти остана ресто:</p>
+      <div class="wallet-total" style="font-size: 2.5rem;"><span id="streetChangeText">0</span> €</div>
+      <p style="font-size: 1.15rem; font-weight: 800; color: #2d6a4f;">👉 Избери сума от <strong>Банкомата</strong> вдясно, за да изтеглиш още пари!</p>
+    </div>
+
+    <div class="atm-kiosk">
+      <h2 style="margin: 0; font-size: 1.85rem; color: #ffb703;">🏧 БАНКОМАТ „КАПИТАН ДЖАК“</h2>
+      <div class="atm-screen-inner">
+        <div style="font-size: 1.25rem; font-weight: 900;">Избери една сума за теглене:</div>
+        <div id="atmGrid" class="atm-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="calcModal" class="modal-overlay">
+  <div class="calc-modal">
+    <button id="closeCalcBtn" class="close-modal-btn" onclick="closeCalcModal()">✕</button>
+    <h2 id="calcTitle" style="margin: 0; color: #1b4332; font-size: 1.7rem;">Пресметни!</h2>
+    <p id="calcSubtitle" style="margin: 5px 0; font-weight: 800; color: #5c3a21; font-size: 1.15rem;"></p>
+    <div class="math-equation">
+      <span id="eqLeft">64 € - 28 € =</span>
+      <span id="answerBox" class="answer-display">?</span>
+      <span>€</span>
+    </div>
+    <div id="feedbackBanner" class="feedback-banner"></div>
+    <div class="numpad">
+      <button class="num-btn" onclick="pressDigit('1')">1</button>
+      <button class="num-btn" onclick="pressDigit('2')">2</button>
+      <button class="num-btn" onclick="pressDigit('3')">3</button>
+      <button class="num-btn" onclick="pressDigit('4')">4</button>
+      <button class="num-btn" onclick="pressDigit('5')">5</button>
+      <button class="num-btn" onclick="pressDigit('6')">6</button>
+      <button class="num-btn" onclick="pressDigit('7')">7</button>
+      <button class="num-btn" onclick="pressDigit('8')">8</button>
+      <button class="num-btn" onclick="pressDigit('9')">9</button>
+      <button class="num-btn btn-clear" onclick="clearInput()">⌫ Изтрий</button>
+      <button class="num-btn" onclick="pressDigit('0')">0</button>
+      <button class="num-btn btn-ok" onclick="checkAnswer()">✔ Провери</button>
+    </div>
+  </div>
+</div>
+
+<div id="screen-end" class="screen" style="background: radial-gradient(circle, #ffb703 0%, #fb8500 100%); text-align: center;">
+  <div class="calc-modal" style="max-width: 720px;">
+    <div style="font-size: 5rem;">🏆🦜🏝️</div>
+    <h1 style="color: #1b4332; font-size: 2.5rem; margin: 10px 0;">Мисията е изпълнена!</h1>
+    <p style="font-size: 1.4rem; font-weight: 800; color: #3d220e;">Всички 22 смели „Пружинки“ пазаруваха успешно и се прибраха в базовия лагер при Капитан Джак!</p>
+    <button class="btn-jungle" style="margin-top: 15px;" onclick="location.reload()">🔄 Започни нова експедиция</button>
+  </div>
+</div>
+
+<script>
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playTone(freq, type, duration, delay = 0) {
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(audioCtx.currentTime + delay);
+      osc.stop(audioCtx.currentTime + delay + duration);
+    } catch(e) {}
+  }
+  function soundClick() { playTone(520, 'sine', 0.08); }
+  function soundTick() { playTone(320, 'triangle', 0.05); }
+  function soundWrong() { playTone(200, 'sawtooth', 0.25, 0); playTone(150, 'sawtooth', 0.35, 0.2); }
+  function soundSuccess() {
+    playTone(523, 'sine', 0.15, 0);
+    playTone(659, 'sine', 0.15, 0.12);
+    playTone(784, 'sine', 0.15, 0.24);
+    playTone(1046, 'sine', 0.4, 0.36);
+  }
+
+  let remainingStudents = Array.from({length: 22}, (_, i) => i + 1);
+  let currentStudent = null, wheelAngle = 0, isSpinning = false;
+  let currentWallet = 0, selectedSweet = null, currentChange = 0, atmWithdrawAmount = 0;
+  let calcMode = 'SUB', expectedAnswer = 0, userTyped = '';
+
+  const initialSweets = [
+    { id: 1, name: "Торта „Тигър“", emoji: "🍰", price: 28, sold: false },
+    { id: 2, name: "Мъфин „Маймунка“", emoji: "🧁", price: 17, sold: false },
+    { id: 3, name: "Сладолед „Оазис“", emoji: "🍨", price: 24, sold: false },
+    { id: 4, name: "Сок „Папагал“", emoji: "🍹", price: 16, sold: false },
+    { id: 5, name: "Поничка „Слънце“", emoji: "🍩", price: 19, sold: false },
+    { id: 6, name: "Парче диня", emoji: "🍉", price: 14, sold: false },
+    { id: 7, name: "Кроасан „Джак“", emoji: "🥐", price: 23, sold: false },
+    { id: 8, name: "Шоколад „Джунгла“", emoji: "🍫", price: 26, sold: false },
+    { id: 9, name: "Близалка „Дъга“", emoji: "🍭", price: 15, sold: false },
+    { id: 10, name: "Палачинки с мед", emoji: "🥞", price: 34, sold: false },
+    { id: 11, name: "Кокосов шейк", emoji: "🥥", price: 22, sold: false },
+    { id: 12, name: "Ягодов крем", emoji: "🍓", price: 27, sold: false },
+    { id: 13, name: "Бисквитка „Компас“", emoji: "🍪", price: 18, sold: false },
+    { id: 14, name: "Бананов сплит", emoji: "🍌", price: 32, sold: false },
+    { id: 15, name: "Плодов пай", emoji: "🥧", price: 29, sold: false },
+    { id: 16, name: "Бомбон „Съкровище“", emoji: "🍬", price: 13, sold: false },
+    { id: 17, name: "Вафла „Сафари“", emoji: "🧇", price: 25, sold: false },
+    { id: 18, name: "Еклер „Жираф“", emoji: "🥖", price: 21, sold: false },
+    { id: 19, name: "Ананасов десерт", emoji: "🍍", price: 35, sold: false },
+    { id: 20, name: "Меденка „Остров“", emoji: "🍯", price: 19, sold: false },
+    { id: 21, name: "Торта „Капитан“", emoji: "🎂", price: 38, sold: false },
+    { id: 22, name: "Фунийка „Палма“", emoji: "🍦", price: 26, sold: false }
+  ];
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function goToWheelScreen() {
+    if (remainingStudents.length === 0) {
+      showScreen('screen-end');
+      soundSuccess();
+      return;
+    }
+    document.getElementById('remainingCountText').textContent = 'Оставащи ученици: ' + remainingStudents.length;
+    document.getElementById('parrotSpeech').innerHTML = 'Натисни бутона ЗАВЪРТИ!';
+    document.getElementById('spinBtn').disabled = false;
+    drawWheel();
+    showScreen('screen-wheel');
+  }
+
+  const wheelColors = ['#e76f51', '#f4a261', '#e9c46a', '#2a9d8f', '#52b788', '#48cae4', '#f77f00'];
+  function drawWheel() {
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const cx = canvas.width / 2, cy = canvas.height / 2, radius = cx - 8;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const count = remainingStudents.length;
+    if (count === 0) return;
+    const arc = (2 * Math.PI) / count;
+    for (let i = 0; i < count; i++) {
+      const angle = wheelAngle + i * arc;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, radius, angle, angle + arc);
+      ctx.fillStyle = wheelColors[i % wheelColors.length]; ctx.fill();
+      ctx.lineWidth = 3; ctx.strokeStyle = '#5c3a21'; ctx.stroke();
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle + arc / 2);
+      ctx.textAlign = 'right'; ctx.fillStyle = '#fff';
+      ctx.font = count > 10 ? '900 21px sans-serif' : '900 30px sans-serif';
+      ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 4;
+      ctx.fillText(remainingStudents[i], radius - 18, 8); ctx.restore();
+    }
+    ctx.beginPath(); ctx.arc(cx, cy, 36, 0, 2 * Math.PI);
+    ctx.fillStyle = '#8b5a2b'; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = '#ffe8a3'; ctx.stroke();
+  }
+
+  function spinWheel() {
+    if (isSpinning || remainingStudents.length === 0) return;
+    isSpinning = true;
+    document.getElementById('spinBtn').disabled = true;
+    document.getElementById('parrotEmoji').classList.add('parrot-spin');
+    document.getElementById('parrotSpeech').innerHTML = 'Колелото се върти...';
+
+    const chosenIndex = Math.floor(Math.random() * remainingStudents.length);
+    currentStudent = remainingStudents[chosenIndex];
+
+    const count = remainingStudents.length, arc = (2 * Math.PI) / count;
+    const targetSectorCenter = chosenIndex * arc + arc / 2;
+    const finalAngle = (6 * 2 * Math.PI) + (-Math.PI / 2 - targetSectorCenter);
+    const startAngle = wheelAngle, duration = 2800, startTime = performance.now();
+    let lastTickSector = -1;
+
+    function animate(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      wheelAngle = startAngle + (finalAngle - startAngle) * ease;
+      drawWheel();
+      const currentSector = Math.floor(((wheelAngle % (2 * Math.PI)) + 2 * Math.PI) / arc);
+      if (currentSector !== lastTickSector) { soundTick(); lastTickSector = currentSector; }
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        isSpinning = false;
+        document.getElementById('parrotEmoji').classList.remove('parrot-spin');
+        soundSuccess();
+        remainingStudents.splice(chosenIndex, 1);
+
+        // Папагалът казва само числото и след пауза отваря сладкарницата
+        document.getElementById('parrotSpeech').innerHTML = '<span class="chosen-number-big">' + currentStudent + '</span>';
+        setTimeout(() => {
+          enterBakery();
+        }, 1700);
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+
+  function isSubtractionWithBorrowing(a, b) {
+    return a > b && a <= 99 && (a % 10) < (b % 10);
+  }
+
+  function generateSmartWallet() {
+    const availableSweets = initialSweets.filter(s => !s.sold);
+    let validWallets = [];
+    for (let w = 41; w <= 98; w++) {
+      if (availableSweets.some(s => isSubtractionWithBorrowing(w, s.price))) {
+        validWallets.push(w);
+      }
+    }
+    if (validWallets.length > 0) {
+      return validWallets[Math.floor(Math.random() * validWallets.length)];
+    }
+    return 72;
+  }
+
+  function renderWalletVisuals(amount) {
+    const container = document.getElementById('billsContainer');
+    container.innerHTML = '';
+    let rem = amount;
+    const denoms = [
+      { val: 50, cls: 'euro-bill bill-50' }, { val: 20, cls: 'euro-bill bill-20' },
+      { val: 10, cls: 'euro-bill bill-10' }, { val: 5, cls: 'euro-bill bill-5' },
+      { val: 2, cls: 'euro-coin coin-2' }, { val: 1, cls: 'euro-coin coin-1' }
+    ];
+    denoms.forEach(d => {
+      while (rem >= d.val) {
+        rem -= d.val;
+        const el = document.createElement('div');
+        el.className = d.cls; el.textContent = d.val + ' €';
+        container.appendChild(el);
+      }
+    });
+  }
+
+  function enterBakery() {
+    currentWallet = generateSmartWallet();
+    document.getElementById('bakeryStudentNum').textContent = currentStudent;
+    document.getElementById('walletAmountText').textContent = currentWallet;
+    renderWalletVisuals(currentWallet);
+    const showcase = document.getElementById('showcasePanel');
+    showcase.innerHTML = '';
+    initialSweets.forEach(sweet => {
+      const card = document.createElement('div');
+      card.className = 'sweet-card';
+      const canBuy = !sweet.sold && isSubtractionWithBorrowing(currentWallet, sweet.price);
+      if (sweet.sold) card.classList.add('sold');
+      else if (!canBuy) card.classList.add('disabled-item');
+      card.innerHTML = '<div class="sweet-emoji">' + sweet.emoji + '</div><div class="sweet-name">' + sweet.name + '</div><div class="price-tag">' + sweet.price + ' €</div>';
+      if (canBuy) card.onclick = () => selectSweet(sweet);
+      showcase.appendChild(card);
+    });
+    showScreen('screen-bakery');
+  }
+
+  function selectSweet(sweet) {
+    soundClick();
+    selectedSweet = sweet;
+    calcMode = 'SUB';
+    expectedAnswer = currentWallet - sweet.price;
+    userTyped = '';
+    document.getElementById('calcTitle').textContent = '🧁 Купуваш: ' + sweet.name;
+    document.getElementById('calcSubtitle').textContent = 'Имаш ' + currentWallet + ' €, а цената е ' + sweet.price + ' €. Колко евро ресто ще ти останат?';
+    document.getElementById('eqLeft').textContent = currentWallet + ' € − ' + sweet.price + ' € =';
+    document.getElementById('answerBox').textContent = '?';
+    document.getElementById('feedbackBanner').textContent = '';
+    document.getElementById('closeCalcBtn').style.display = 'block';
+    document.getElementById('calcModal').classList.add('active');
+  }
+
+  function pressDigit(d) {
+    soundClick();
+    if (userTyped.length >= 3) return;
+    userTyped = (userTyped === '0') ? d : userTyped + d;
+    document.getElementById('answerBox').textContent = userTyped;
+  }
+
+  function clearInput() {
+    soundClick();
+    userTyped = '';
+    document.getElementById('answerBox').textContent = '?';
+    document.getElementById('feedbackBanner').textContent = '';
+  }
+
+  function closeCalcModal() {
+    soundClick();
+    document.getElementById('calcModal').classList.remove('active');
+  }
+
+  function checkAnswer() {
+    if (userTyped === '') return;
+    const val = parseInt(userTyped, 10);
+    const fb = document.getElementById('feedbackBanner');
+    if (val === expectedAnswer) {
+      soundSuccess();
+      fb.textContent = '🎉 БРАВО! ВЕРЕН ОТГОВОР!';
+      fb.className = 'feedback-banner feedback-right';
+      setTimeout(() => {
+        document.getElementById('calcModal').classList.remove('active');
+        if (calcMode === 'SUB') {
+          selectedSweet.sold = true;
+          currentChange = expectedAnswer;
+          openStreetWithAtm();
+        } else {
+          goToWheelScreen();
+        }
+      }, 1200);
+    } else {
+      soundWrong();
+      fb.textContent = '❌ ОПИТАЙ ПАК';
+      fb.className = 'feedback-banner feedback-wrong';
+      setTimeout(() => {
+        userTyped = '';
+        document.getElementById('answerBox').textContent = '?';
+      }, 900);
+    }
+  }
+
+  function isAdditionWithCarrying(a, b) {
+    return (a + b) <= 100 && ((a % 10) + (b % 10) >= 10);
+  }
+
+  function openStreetWithAtm() {
+    document.getElementById('streetStudentNum').textContent = currentStudent;
+    document.getElementById('streetChangeText').textContent = currentChange;
+    const grid = document.getElementById('atmGrid');
+    grid.innerHTML = '';
+
+    let valid = [];
+    for (let add = 11; add <= 69; add++) {
+      if (isAdditionWithCarrying(currentChange, add)) valid.push(add);
+    }
+    valid.sort(() => Math.random() - 0.5);
+    valid.slice(0, 9).sort((a, b) => a - b).forEach(amt => {
+      const btn = document.createElement('button');
+      btn.className = 'atm-amount-btn';
+      btn.textContent = amt + ' €';
+      btn.onclick = () => selectAtmAmount(amt);
+      grid.appendChild(btn);
+    });
+
+    showScreen('screen-street');
+  }
+
+  function selectAtmAmount(amt) {
+    soundClick();
+    atmWithdrawAmount = amt;
+    calcMode = 'ADD';
+    expectedAnswer = currentChange + atmWithdrawAmount;
+    userTyped = '';
+    document.getElementById('calcTitle').textContent = '🏕️ Към базовия лагер!';
+    document.getElementById('calcSubtitle').textContent = 'Имаше ' + currentChange + ' € и изтегли още ' + atmWithdrawAmount + ' €. С колко общо евро се прибираш?';
+    document.getElementById('eqLeft').textContent = currentChange + ' € + ' + atmWithdrawAmount + ' € =';
+    document.getElementById('answerBox').textContent = '?';
+    document.getElementById('feedbackBanner').textContent = '';
+    document.getElementById('closeCalcBtn').style.display = 'none';
+    document.getElementById('calcModal').classList.add('active');
+  }
+
+  // Начално нарисуване на колелото
+  drawWheel();
+</script>
+</body>
+</html>
